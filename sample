@@ -1,0 +1,31 @@
+'use strict';
+angular.module('something', [
+    'deps'
+    ])
+    .config(function($locationProvider) {
+        $locationProvider.html5Mode(true);
+    })
+    .config(function($provide) {
+        return $provide.decorator('$uiViewScroll', function($delegate, $window) {
+            return function(uiViewElement) {
+                //eventually do something more intelligent with the uiViewElement
+                return $window.scrollTo(0, 0);
+            };
+        });
+    }).run(function($injector, ngProgress) {
+        var $rootScope = $injector.get('$rootScope');
+        // Sets the height of the progressbar. Use any valid CSS value Eg '10px', '1em' or '1%'.
+        // ngProgress.height();
+
+        // Sets the color of the progressbar and it's shadow. Use any valid HTML color
+        // ngProgress.color();
+        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState) {
+            ngProgress.start();
+        });
+        $rootScope.$on('$stateChangeSuccess', function() {
+            ngProgress.complete();
+        });
+        $rootScope.$on('$stateChangeError', function() {
+            ngProgress.done();
+        });
+    });
